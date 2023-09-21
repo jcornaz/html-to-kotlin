@@ -7,5 +7,7 @@ rust-version = "1.72"
 repository = "https://github.com/jcornaz/html-to-kotlin"
 
 [dependencies]
+tl = "0.7"
+main_error = "0.1"
 
 [dev-dependencies]
