@@ -88,7 +88,7 @@ impl<'a> Display for KotlinDslIndentedNode<'a> {
             } => {
                 write!(f, "{name}")?;
                 if let Some(classes) = classes {
-                    write!(f, "(classes=\"{classes}\"")?;
+                    write!(f, "(classes=\"{classes}\")")?;
                 }
                 if attributes.is_empty() && children.is_empty() {
                     if classes.is_none() {
@@ -108,7 +108,6 @@ impl<'a> Display for KotlinDslIndentedNode<'a> {
                     indent: self.indent + 1,
                     node,
                 }) {
-                    write_indent(f, self.indent + 1)?;
                     writeln!(f, "{child}")?;
                 }
                 write_indent(f, self.indent)?;
