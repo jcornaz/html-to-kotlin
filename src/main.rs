@@ -24,6 +24,7 @@ fn main() -> Result<(), MainError> {
     Ok(())
 }
 
+#[allow(clippy::type_complexity)]
 fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> KotlinDslNode {
     match node {
         Node::Tag(tag) => {
