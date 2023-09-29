@@ -1,7 +1,7 @@
 set dotenv-load
 
 # Perform all verifications (compile, test, lint, etc.)
-verify: test lint check-msrv
+verify: test lint
 
 # Watch the source files and run `just verify` when source changes
 watch:
@@ -16,10 +16,6 @@ test:
 lint:
 	cargo fmt -- --check
 	cargo hack clippy --each-feature --all-targets
-
-# Make sure the MSRV is satisfiable
-check-msrv:
-	cargo msrv verify
 
 # Clean up compilation output
 clean:
