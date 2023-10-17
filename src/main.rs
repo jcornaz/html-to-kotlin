@@ -64,9 +64,20 @@ fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> Option<KotlinDsl
             }
             Some(KotlinDslNode::String(string))
         }
-        Node::Comment(comment) => Some(KotlinDslNode::Comment(
-            comment.as_utf8_str().as_ref().to_owned(),
-        )),
+        Node::Comment(comment) => {
+            let string = comment
+                .as_utf8_str()
+                .as_ref()
+                .trim()
+                .strip_prefix("<!--")
+                .and_then(|s| s.strip_suffix("-->"))
+                .map(|s| s.trim().to_owned())
+                .unwrap_or_else(|| comment.as_utf8_str().trim().to_owned());
+            if string.is_empty() {
+                return None;
+            }
+            Some(KotlinDslNode::Comment(string))
+        }
     }
 }
 
