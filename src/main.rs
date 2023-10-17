@@ -13,10 +13,11 @@ fn main() -> Result<(), MainError> {
     let mut raw = String::new();
     io::stdin().read_to_string(&mut raw)?;
     let dom = tl::parse(&raw, ParserOptions::default())?;
-    for node in dom.children() {
-        let Some(node) = build_kotlin_node(node.get(dom.parser()).unwrap(), dom.parser()) else {
-            continue;
-        };
+    let nodes = dom
+        .children()
+        .iter()
+        .filter_map(|node| build_kotlin_node(node.get(dom.parser()).unwrap(), dom.parser()));
+    for node in nodes {
         let dsl_node = KotlinDslIndentedNode {
             indent: 0,
             node: &node,
