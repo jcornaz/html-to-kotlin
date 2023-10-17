@@ -14,7 +14,9 @@ fn main() -> Result<(), MainError> {
     io::stdin().read_to_string(&mut raw)?;
     let dom = tl::parse(&raw, ParserOptions::default())?;
     for node in dom.children() {
-        let node = build_kotlin_node(node.get(dom.parser()).unwrap(), dom.parser());
+        let Some(node) = build_kotlin_node(node.get(dom.parser()).unwrap(), dom.parser()) else {
+            continue;
+        };
         let dsl_node = KotlinDslIndentedNode {
             indent: 0,
             node: &node,
@@ -25,7 +27,7 @@ fn main() -> Result<(), MainError> {
 }
 
 #[allow(clippy::type_complexity)]
-fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> KotlinDslNode {
+fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> Option<KotlinDslNode> {
     match node {
         Node::Tag(tag) => {
             let (classes, attributes): (
@@ -40,9 +42,9 @@ fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> KotlinDslNode {
                 .children()
                 .top()
                 .iter()
-                .filter_map(|child| Some(build_kotlin_node(child.get(parser)?, parser)))
+                .filter_map(|child| build_kotlin_node(child.get(parser)?, parser))
                 .collect();
-            KotlinDslNode::Tag {
+            Some(KotlinDslNode::Tag {
                 name: tag.name().as_utf8_str().as_ref().to_owned(),
                 classes: classes
                     .into_iter()
@@ -53,10 +55,18 @@ fn build_kotlin_node<'a>(node: &'a Node, parser: &'a Parser) -> KotlinDslNode {
                     .map(|(k, v)| (k.as_ref().to_owned(), v.as_ref().to_owned()))
                     .collect(),
                 children,
-            }
+            })
         }
-        Node::Raw(raw) => KotlinDslNode::String(raw.as_utf8_str().as_ref().to_owned()),
-        Node::Comment(comment) => KotlinDslNode::Comment(comment.as_utf8_str().as_ref().to_owned()),
+        Node::Raw(raw) => {
+            let string = raw.as_utf8_str().as_ref().trim().to_owned();
+            if string.is_empty() {
+                return None;
+            }
+            Some(KotlinDslNode::String(string))
+        }
+        Node::Comment(comment) => Some(KotlinDslNode::Comment(
+            comment.as_utf8_str().as_ref().to_owned(),
+        )),
     }
 }
 
