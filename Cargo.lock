@@ -18,6 +18,6 @@ checksum = "155db5e86c6e45ee456bf32fad5a290ee1f7151c2faca27ea27097568da67d1a"
 
 [[package]]
 name = "tl"
-version = "0.7.7"
+version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5e993a1c7c32fdf90a308cec4d457f507b2573acc909bd6e7a092321664fdb3"
+checksum = "b130bd8a58c163224b44e217b4239ca7b927d82bf6cc2fea1fc561d15056e3f7"
